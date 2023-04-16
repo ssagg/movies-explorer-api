@@ -18,7 +18,7 @@ router.post(
       nameRU: Joi.string().required().min(2).max(30),
       nameEN: Joi.string().required().min(2).max(30),
       thumbnail: Joi.string().required().pattern(link),
-      movieId: Joi.string().required().min(2).max(30),
+      movieId: Joi.number().required(),
     }),
   }),
   createCard

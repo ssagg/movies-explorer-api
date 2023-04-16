@@ -1,7 +1,6 @@
 const bcrypt = require("bcryptjs");
 const jsonwebtoken = require("jsonwebtoken");
 const userSchema = require("../models/user");
-const NotFoundError = require("../errors/NotFound");
 const ValidationError = require("../errors/BadRequest");
 const ConflictError = require("../errors/Conflict");
 const UnauthorizedError = require("../errors/Unauthorized");
@@ -66,34 +65,14 @@ module.exports.getCurrentUser = async (req, res, next) => {
   }
 };
 
-module.exports.getUserById = async (req, res, next) => {
-  try {
-    const response = await userSchema.findById(req.params.userId);
-    if (response) {
-      res.send(response);
-    }
-    throw new NotFoundError("Запрашиваемый пользователь не найден");
-  } catch (err) {
-    if (err.name === "CastError") {
-      next(
-        new ValidationError(
-          "Ошибка при поиске пользователя. Некорректный id пользователя"
-        )
-      );
-    } else {
-      next(err);
-    }
-  }
-};
-
 module.exports.updateUser = async (req, res, next) => {
   try {
-    const { name, about } = req.body;
+    const { name, email } = req.body;
     const response = await userSchema.findByIdAndUpdate(
       req.user._id,
       {
         name,
-        about,
+        email,
       },
       { new: true, runValidators: true }
     );
@@ -102,9 +81,11 @@ module.exports.updateUser = async (req, res, next) => {
     if (err.name === "ValidationError") {
       next(
         new ValidationError(
-          "Ошибка обновления аватара. Переданы некорректные данные"
+          "Ошибка обновления данных. Переданы некорректные данные"
         )
       );
+    } else if (err.code === 11000) {
+      next(new ConflictError("Такой пользователь уже зарегистрирован."));
     } else {
       next(err);
     }

@@ -2,10 +2,10 @@
 
 API для дипллмной работы movies explore со следующими возможностями: авторизации и регистрации пользователей, операции с избранными фильмами и пользоватем.
 
-Пожалуйста, прикрепите в это описание ссылку на сайт, размещенный на Яндекс.Облаке.
-https://mesto.ssagg.nomoredomains.work/
+Backend, размещенный на Яндекс.Облаке.
+https://api.diplom.ssagg.nomoredomains.work/
 
-Адрес репозитория: https://github.com/ssagg/react-mesto-api-full-gha
+Адрес репозитория: https://github.com/ssagg/movies-explorer-api/tree/level-1
 
 ## Технологии
 
@@ -17,4 +17,4 @@ IP 158.160.39.6
 
 Frontend TBD
 
-Backend https://api.nomoredomains.work/
+Backend https://api.diplom.ssagg.nomoredomains.work/

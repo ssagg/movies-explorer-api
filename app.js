@@ -13,19 +13,12 @@ const { PORT, DB } = require("./config");
 const limiterConfig = require("./utils/limiterConfig");
 
 const app = express();
-const limiter = rateLimit(
-  limiterConfig
-  //   {
-  //   windowMs: 150 * 60 * 1000,
-  //   max: 100,
-  //   standardHeaders: true,
-  //   legacyHeaders: false,
-  // }
-);
+const limiter = rateLimit(limiterConfig);
 
 app.use(limiter);
 app.use(helmet());
-// app.use(cors({ origin: ['https://mesto.ssagg.nomoredomains.work', 'http://mesto.ssagg.nomoredomains.work'] }));
+// corse feature TBD
+// app.use(cors({ origin: ['https://diplom.ssagg.nomoredomains.work', 'http://diplom.ssagg.nomoredomains.work'] }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 

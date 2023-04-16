@@ -38,7 +38,6 @@ module.exports.createCard = async (req, res, next) => {
     if (err.name === "ValidationError") {
       next(
         new ValidationError(
-          // err.message
           "Переданы некорректные данные при создании карточки"
         )
       );
@@ -49,9 +48,10 @@ module.exports.createCard = async (req, res, next) => {
 };
 
 module.exports.getCards = (req, res, next) => {
+  console.log(req.user._id);
   cardSchema
-    .find({})
-    .populate(["owner"])
+    .find({ owner: req.user._id })
+    .populate("owner")
     .then((cards) => res.send(cards))
     .catch((err) => {
       next(err);
