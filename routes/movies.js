@@ -1,36 +1,36 @@
-const { celebrate, Joi, errors } = require("celebrate");
-const router = require("express").Router();
-const link = require("../utils/regexPattern");
-const { getCards, createCard, removeCard } = require("../controllers/movies");
+const { celebrate, Joi, errors } = require('celebrate');
+const router = require('express').Router();
+const { link, imageLink } = require('../utils/regexPattern');
+const { getMovies, createMovie, removeMovie } = require('../controllers/movies');
 
-router.get("/", getCards);
+router.get('/', getMovies);
 router.post(
-  "/",
+  '/',
   celebrate({
     body: Joi.object().keys({
-      country: Joi.string().required().min(2).max(30),
-      director: Joi.string().required().min(2).max(30),
+      country: Joi.string().required(),
+      director: Joi.string().required(),
       duration: Joi.number().required(),
-      year: Joi.string().required().min(2).max(30),
-      description: Joi.string().required().min(2).max(30),
-      image: Joi.string().required().pattern(link),
+      year: Joi.string().required(),
+      description: Joi.string().required(),
+      image: Joi.string().required().pattern(imageLink),
       trailerLink: Joi.string().required().pattern(link),
-      nameRU: Joi.string().required().min(2).max(30),
-      nameEN: Joi.string().required().min(2).max(30),
-      thumbnail: Joi.string().required().pattern(link),
+      nameRU: Joi.string().required(),
+      nameEN: Joi.string().required(),
+      thumbnail: Joi.string().required().pattern(imageLink),
       movieId: Joi.number().required(),
     }),
   }),
-  createCard
+  createMovie,
 );
 router.delete(
-  "/:cardId",
+  '/:movieId',
   celebrate({
     params: Joi.object().keys({
-      cardId: Joi.string().length(24).hex().required(),
+      movieId: Joi.string().length(24).hex().required(),
     }),
   }),
-  removeCard
+  removeMovie,
 );
 
 router.use(errors());

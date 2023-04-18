@@ -1,7 +1,7 @@
-const mongoose = require("mongoose");
-const validator = require("validator");
+const mongoose = require('mongoose');
+const validator = require('validator');
 
-const cardSchema = new mongoose.Schema({
+const movieSchema = new mongoose.Schema({
   country: {
     type: String,
     required: true,
@@ -29,7 +29,7 @@ const cardSchema = new mongoose.Schema({
       validator(link) {
         return validator.isURL(link);
       },
-      message: "URL невалидный",
+      message: 'URL невалидный',
     },
   },
   trailerLink: {
@@ -39,7 +39,7 @@ const cardSchema = new mongoose.Schema({
       validator(link) {
         return validator.isURL(link);
       },
-      message: "URL невалидный",
+      message: 'URL невалидный',
     },
   },
   thumbnail: {
@@ -49,12 +49,12 @@ const cardSchema = new mongoose.Schema({
       validator(link) {
         return validator.isURL(link);
       },
-      message: "URL невалидный",
+      message: 'URL невалидный',
     },
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "user",
+    ref: 'user',
     required: true,
   },
   movieId: {
@@ -69,10 +69,6 @@ const cardSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
 });
 
-module.exports = mongoose.model("card", cardSchema);
+module.exports = mongoose.model('movie', movieSchema);

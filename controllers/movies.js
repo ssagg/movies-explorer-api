@@ -1,9 +1,10 @@
-const cardSchema = require("../models/movie");
-const NotFoundError = require("../errors/NotFound");
-const NotAuthorized = require("../errors/Forbidden");
-const ValidationError = require("../errors/BadRequest");
+const movieSchema = require('../models/movie');
+const NotFoundError = require('../errors/NotFound');
+const NotAuthorized = require('../errors/Forbidden');
+const ValidationError = require('../errors/BadRequest');
+const { INVALID_FILM_DATA, FORBIDDEN_FILM_DELETE, FILM_NOT_FOUND } = require('../errors/Errors');
 
-module.exports.createCard = async (req, res, next) => {
+module.exports.createMovie = async (req, res, next) => {
   try {
     const {
       country,
@@ -18,7 +19,7 @@ module.exports.createCard = async (req, res, next) => {
       thumbnail,
       movieId,
     } = req.body;
-    let resp = await cardSchema.create({
+    let resp = await movieSchema.create({
       country,
       director,
       duration,
@@ -32,14 +33,12 @@ module.exports.createCard = async (req, res, next) => {
       movieId,
       owner: req.user._id,
     });
-    resp = await resp.populate("owner");
+    resp = await resp.populate('owner');
     res.send(resp);
   } catch (err) {
-    if (err.name === "ValidationError") {
+    if (err.name === 'ValidationError') {
       next(
-        new ValidationError(
-          "Переданы некорректные данные при создании карточки"
-        )
+        new ValidationError(INVALID_FILM_DATA),
       );
     } else {
       next(err);
@@ -47,38 +46,35 @@ module.exports.createCard = async (req, res, next) => {
   }
 };
 
-module.exports.getCards = (req, res, next) => {
-  console.log(req.user._id);
-  cardSchema
+module.exports.getMovies = (req, res, next) => {
+  movieSchema
     .find({ owner: req.user._id })
-    .populate("owner")
+    .populate('owner')
     .then((cards) => res.send(cards))
     .catch((err) => {
       next(err);
     });
 };
 
-module.exports.removeCard = (req, res, next) => {
-  const removeCard = () =>
-    cardSchema
-      .findByIdAndRemove(req.params.cardId)
-      .then((card) => res.send(card))
-      .catch(next);
+module.exports.removeMovie = (req, res, next) => {
+  const removeCard = () => movieSchema.findByIdAndRemove(req.params.movieId)
+    .then((card) => res.send(card))
+    .catch(next);
 
-  cardSchema
-    .findById(req.params.cardId)
+  movieSchema
+    .findById(req.params.movieId)
     .orFail(() => {
-      throw new NotFoundError("Такой карточки не существует");
+      throw new NotFoundError(FILM_NOT_FOUND);
     })
     .then((card) => {
       if (card.owner.toString() === req.user._id) {
         return removeCard();
       }
-      throw new NotAuthorized("Нельзя удалять чужие фильмы");
+      throw new NotAuthorized(FORBIDDEN_FILM_DELETE);
     })
     .catch((err) => {
-      if (err.name === "CastError") {
-        next(new ValidationError("Переданы некорректные данные карточки"));
+      if (err.name === 'CastError') {
+        next(new ValidationError(INVALID_FILM_DATA));
       } else {
         next(err);
       }
